@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Tareas</title>
+    <style>
+        body {
+            background-color: grey;
+        }
+        .task-box {
+            margin: 10px;
+            padding: 10px;
+            background-color: white;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 20px; 
+        }
+        .task-counter {
+            text-align: center;
+            font-size: 20px; 
+            color: green; 
+            margin-top: 20px; 
+        }
+        h1 {
+            text-align: center; 
+            color: red; 
+            font-size: 40px; 
+            font-weight: bold; 
+        }
+        #taskInput {
+            width: 200px; 
+            padding: 10px; 
+            font-size: 20px; 
+        }
+        button {
+            padding: 10px 20px; 
+            font-size: 16px; 
+        }
+        .task-list {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .completed-tasks, .incomplete-tasks {
+            width: 40%; 
+            padding: 10px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            font-size: 20px; 
+        }
+        .task-total {
+            margin-top: 20px;
+            font-size: 20px; 
+            text-align: center; 
+        }
+        .incomplete-task {
+            color: red; 
+            font-weight: bold; 
+        }
+        .completed-task {
+            color: blue; 
+            text-decoration: line-through; 
+            font-weight: bold; 
+        }
+    </style>
+</head>
+<body>
+    <h1> LISTA DE TAREAS</h1>
+    <div>
+        <input type="text" id="taskInput" placeholder="Nueva tarea">
+        <button onclick="addTask()">Agregar Tarea</button>
+    </div>
+    
+    <div class="task-counter"> TAREAS COMPLETADAS : <span id="completedCount">0</span></div>
+    
+    <div class="task-list">
+        <div class="incomplete-tasks">
+            <h2>Tareas No Realizadas</h2>
+            <div id="incompleteTaskList"></div>
+        </div>
+        <div class="completed-tasks">
+            <h2>Tareas Realizadas</h2>
+            <div id="completedTaskList"></div>
+        </div>
+    </div>
+
+    <div class="task-total">
+        TAREAS REALIZADAS: <span id="totalCount">0</span> | TAREAS NO REALIZADAS: <span id="incompleteCount">0</span>
+    </div>
+
+    <script>
+        let tasks = [];
+
+        function addTask() {
+            const taskInput = document.getElementById('taskInput');
+            const taskDescription = taskInput.value;
+
+            if (taskDescription) {
+                const newTask = {
+                    descripcion: taskDescription,
+                    completado: false
+                };
+                tasks.push(newTask);
+                taskInput.value = '';
+                updateTaskLists();
+            }
+        }
+
+        function toggleTask(index) {
+            tasks[index].completado = !tasks[index].completado;
+            updateTaskLists();
+        }
+
+        function updateTaskLists() {
+            const incompleteTaskList = document.getElementById('incompleteTaskList');
+            const completedTaskList = document.getElementById('completedTaskList');
+            incompleteTaskList.innerHTML = '';
+            completedTaskList.innerHTML = '';
+
+            tasks.forEach((task, index) => {
+                const taskDiv = document.createElement('div');
+                taskDiv.className = 'task-box';
+                taskDiv.textContent = task.descripcion;
+                const button = document.createElement('button');
+                button.textContent = task.completado ? 'Desmarcar' : 'Completar';
+                button.onclick = () => toggleTask(index);
+
+                if (task.completado) {
+                    taskDiv.classList.add('completed-task');
+                    completedTaskList.appendChild(taskDiv);
+                } else {
+                    taskDiv.classList.add('incomplete-task');
+                    incompleteTaskList.appendChild(taskDiv);
+                }
+
+                taskDiv.appendChild(button);
+            });
+
+            updateCounts();
+        }
+
+        function updateCounts() {
+            const completedCount = tasks.filter(task => task.completado).length;
+            const incompleteCount = tasks.length - completedCount;
+            document.getElementById('completedCount').textContent = completedCount;
+            document.getElementById('incompleteCount').textContent = incompleteCount;
+            document.getElementById('totalCount').textContent = tasks.length;
+        }
+    </script>
+</body>
+</html>
